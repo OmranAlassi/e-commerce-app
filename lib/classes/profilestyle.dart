@@ -14,20 +14,12 @@ List<Profilestyle> profilestyles = [
     color: Color(0XFF222222),
   ),
   Profilestyle(title: 'Matilda Brown', color: Color(0XFF9B9B9B)),
-  Profilestyle(
-    title: 'matildabrown@mail.com',
-    image: '',
-    color: Color(0XFF9B9B9B),
-  ),
+  Profilestyle(title: 'matildabrown@mail.com', color: Color(0XFF9B9B9B)),
 ];
 List<Profilestyle> profilestyles2 = [
   Profilestyle(title: 'My orders', color: Color(0XFFFFFFFF)),
 
-  Profilestyle(
-    title: 'Shipping addresses',
-    image: '',
-    color: Color(0XFF222222),
-  ),
+  Profilestyle(title: 'Shipping addresses', color: Color(0XFF222222)),
 
   Profilestyle(title: 'Payment methods', color: Color(0XFF222222)),
 
