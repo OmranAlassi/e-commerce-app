@@ -85,7 +85,6 @@ List<Homestyle> homestyle3 = [
 List<Homestyle> homestyle4 = [
   Homestyle(
     color: Color(0XFFDB3022),
-
     image: 'assets/images/Rating 5 stars.png',
   ),
   Homestyle(color: Color(0XFFDB3022), image: 'assets/images/no points.png'),
