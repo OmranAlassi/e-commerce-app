@@ -13,15 +13,15 @@ import 'package:online_store/features/auth/busines_logic_layer/auth_controller.d
 
 class RegisterScreen extends StatelessWidget {
   RegisterScreen({super.key});
-
-  AuthController authController = Get.put(AuthController());
+  final AuthController authController = Get.put(AuthController());
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  TextEditingController phoneController = TextEditingController();
-  TextEditingController nameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: ListView(
         children: [
           Padding(
@@ -36,7 +36,7 @@ class RegisterScreen extends StatelessWidget {
                   ),
                   Text(
                     'Sign up to create account',
-                    style: GoogleFonts.lato(color: AppColor.b, fontSize: 19),
+                    style: GoogleFonts.lato(color: AppColor.b, fontSize: 24),
                   ),
 
                   AppTextformfiled(

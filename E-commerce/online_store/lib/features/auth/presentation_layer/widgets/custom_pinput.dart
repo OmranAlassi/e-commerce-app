@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:online_store/core/const/app_color.dart';
 import 'package:pinput/pinput.dart';
 
 // ignore: must_be_immutable
@@ -10,6 +11,7 @@ class CustomPinput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Pinput(
+      length: 5,
       errorPinTheme: PinTheme(
         width: MediaQuery.of(context).size.width * 0.18,
         height: 55,
@@ -31,7 +33,7 @@ class CustomPinput extends StatelessWidget {
       preFilledWidget: Text(
         '-',
         style: GoogleFonts.cairo(
-          color: Colors.black,
+          color: AppColor.b3,
           fontSize: 18,
           letterSpacing: 0.2,
           height: 1.4,

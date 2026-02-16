@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
       ),
       getPages: RoutingManager.getPages(),
-      initialRoute: RoutingManager.otpScr,
+      initialRoute: RoutingManager.splashScr,
     );
   }
 }
