@@ -12,6 +12,7 @@ class SuperhomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+
       bottomNavigationBar: PersistentTabView(
         tabs: [
           PersistentTabConfig(

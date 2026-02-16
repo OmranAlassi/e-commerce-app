@@ -12,12 +12,6 @@ class Authservice {
         options: Options(headers: {'Accept': 'application/json'}),
       );
       if (response.statusCode == 200) {
-        final token = response.data["data"]["token"];
-        // print("Token: " + response.data['data']['token']);
-        // final userData = response.data["data"]["user"];
-
-        box.write('token', token);
-        // box.write('user_info', userData);
         return true;
       } else {
         throw response.data['message'] ?? 'Login Failed';

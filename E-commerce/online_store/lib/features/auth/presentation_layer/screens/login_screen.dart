@@ -41,7 +41,7 @@ class LoginScreen extends StatelessWidget {
                   AppPhoneInputBox(
                     controller: phoneController,
                     validator: authController.phoneValidator(),
-                    textInputAction: TextInputAction.next,
+                    textInputAction: TextInputAction.done,
                   ),
 
                   Obx(() {
