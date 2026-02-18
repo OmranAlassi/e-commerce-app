@@ -6,6 +6,7 @@ import 'package:online_store/features/cart/presentation_layer/screens/cart_scree
 import 'package:online_store/features/favorite/presentation_layer/screens/favorite_screen.dart';
 import 'package:online_store/features/home/presentation_layer/screens/home_screen.dart';
 import 'package:online_store/features/home/presentation_layer/screens/superhome_screen.dart';
+import 'package:online_store/features/profile/presentation_layer/screens/profile_screen.dart';
 import 'package:online_store/features/splash/presentation_layer/screens/splash_screen.dart';
 
 class RoutingManager {
@@ -17,6 +18,7 @@ class RoutingManager {
   static String cartScr = '/cartScr';
   static String homeScr = '/homeScr';
   static String favoriteScr = '/favoriteScr';
+  static String profileScr = '/profileScr';
   static List<GetPage> getPages() {
     return [
       GetPage(name: splashScr, page: () => SplashScreen()),
@@ -30,6 +32,7 @@ class RoutingManager {
       GetPage(name: cartScr, page: () => CartScreen()),
       GetPage(name: homeScr, page: () => HomeScreen()),
       GetPage(name: favoriteScr, page: () => FavoriteScreen()),
+      GetPage(name: profileScr, page: () => ProfileScreen()),
     ];
   }
 }

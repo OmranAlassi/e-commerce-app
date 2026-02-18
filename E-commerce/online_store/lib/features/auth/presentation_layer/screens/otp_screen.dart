@@ -5,12 +5,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:online_store/common/widgets/appelevatedbutton.dart';
 import 'package:online_store/core/const/app_color.dart';
 import 'package:online_store/features/auth/busines_logic_layer/auth_controller.dart';
+import 'package:online_store/features/auth/busines_logic_layer/otp_controller.dart';
 import 'package:online_store/features/auth/presentation_layer/widgets/custom_pinput.dart';
 
 class OtpScreen extends StatelessWidget {
   OtpScreen({super.key, required this.phone});
   final String phone;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final OtpController otpController = Get.put(OtpController());
   final AuthController authController = Get.put(AuthController());
   final TextEditingController codeController = TextEditingController();
   @override
@@ -70,7 +72,7 @@ class OtpScreen extends StatelessWidget {
                           ),
                           Obx(() {
                             return Text(
-                              authController.timeText,
+                              otpController.timeText,
                               style: GoogleFonts.lato(
                                 color: AppColor.b3,
                                 fontSize: 14,
@@ -83,8 +85,8 @@ class OtpScreen extends StatelessWidget {
 
                       InkWell(
                         onTap: () {
-                          if (authController.seconds.value == 0) {
-                            authController.startTimer();
+                          if (otpController.seconds.value == 0) {
+                            otpController.startTimer();
                           } else {
                             Get.snackbar(
                               'Error',

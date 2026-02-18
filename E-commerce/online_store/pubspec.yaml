@@ -20,6 +20,8 @@ dependencies:
   flutter_spinkit: ^5.2.2
   pinput: ^6.0.2
   persistent_bottom_nav_bar_v2: ^6.2.0
+  carousel_slider: ^5.1.2
+  smooth_page_indicator: ^2.0.1
 
 dev_dependencies:
   flutter_test:
