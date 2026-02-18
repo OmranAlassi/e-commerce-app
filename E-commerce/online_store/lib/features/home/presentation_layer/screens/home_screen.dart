@@ -22,6 +22,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String userName = box.read('user_name') ?? 'User';
+    final String email = box.read('user_email') ?? 'Email';
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -36,12 +37,19 @@ class HomeScreen extends StatelessWidget {
             spacing: 8,
             children: [
               CircleAvatar(backgroundColor: Colors.white),
-              Obx(() {
-                return Text(
-                  userName,
-                  style: GoogleFonts.lato(color: Colors.white),
-                );
-              }),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    userName,
+                    style: GoogleFonts.lato(color: Colors.white, fontSize: 12),
+                  ),
+                  Text(
+                    email,
+                    style: GoogleFonts.lato(color: Colors.white, fontSize: 12),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
