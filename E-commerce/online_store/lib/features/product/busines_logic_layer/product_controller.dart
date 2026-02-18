@@ -48,7 +48,7 @@ class ProductController extends GetxController {
     try {
       products.value = await cService.getProductsByCategory(id);
     } catch (e) {
-      Get.snackbar('خطأ', e.toString());
+      Get.snackbar('Error', e.toString());
     } finally {
       isLoading.value = false;
     }

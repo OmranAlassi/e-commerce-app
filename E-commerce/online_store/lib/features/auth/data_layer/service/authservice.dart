@@ -36,10 +36,13 @@ class Authservice {
       );
       if (response.statusCode == 200) {
         final token = response.data["data"]["token"];
-        // print("Token: " + response.data['data']['token']);
-        // final userData = response.data["data"]["user"];
+        final name = response.data['data']['name'];
+        final email = response.data['data']['email'];
+
         box.write('token', token);
-        // box.write('user_info', userData);
+        box.write('user_name', name);
+        box.write('user_email', email);
+
         return true;
       } else {
         return false;

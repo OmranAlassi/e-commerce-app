@@ -4,7 +4,6 @@ import 'package:online_store/features/search/data_layer/service/search_service.d
 
 class SearchController extends GetxController {
   final SearchService searchService = SearchService();
-
   RxBool isLoading = false.obs;
   RxList<ProductModel> results = <ProductModel>[].obs;
 

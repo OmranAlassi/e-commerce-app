@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:online_store/core/routing/routing_manager.dart';
 import 'package:online_store/features/auth/data_layer/service/authservice.dart';
 
 class AuthController extends GetxController {
+  GetStorage box = GetStorage();
   RxBool isLoading = false.obs;
   RxBool isobscure = false.obs;
 
