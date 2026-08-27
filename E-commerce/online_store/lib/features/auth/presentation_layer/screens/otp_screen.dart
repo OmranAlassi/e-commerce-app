@@ -86,7 +86,7 @@ class OtpScreen extends StatelessWidget {
                       InkWell(
                         onTap: () {
                           if (otpController.seconds.value == 0) {
-                            otpController.startTimer();
+                            otpController.resendCode(phone);
                           } else {
                             Get.snackbar(
                               'Error',

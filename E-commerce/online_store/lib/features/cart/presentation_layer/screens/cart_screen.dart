@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:online_store/common/widgets/app_error_view.dart';
+import 'package:online_store/common/widgets/app_network_image.dart';
 import 'package:online_store/core/const/app_color.dart';
 import 'package:online_store/features/cart/busines_logic_layer/cart_controller.dart';
 import 'package:online_store/features/cart/data_layer/models/cart_model.dart';
@@ -13,7 +15,6 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    cartController.loadCart();
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -34,6 +35,13 @@ class CartScreen extends StatelessWidget {
       body: Obx(() {
         if (cartController.isLoading.value) {
           return Center(child: SpinKitCircle(color: AppColor.b));
+        }
+        if (cartController.errorMessage.value.isNotEmpty &&
+            cartController.cartItems.isEmpty) {
+          return AppErrorView(
+            message: cartController.errorMessage.value,
+            onRetry: cartController.loadCart,
+          );
         }
         if (cartController.cartItems.isEmpty) {
           return Center(child: Text('The basket is empty'));
@@ -58,16 +66,10 @@ class CartScreen extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: Image.network(
-                        item.product.image ?? '',
+                      child: AppNetworkImage(
+                        url: item.product.image,
                         width: 80,
                         height: 80,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Icon(
-                          Icons.image_not_supported,
-                          size: 50,
-                          color: AppColor.b,
-                        ),
                       ),
                     ),
                     SizedBox(width: 12),
@@ -94,7 +96,7 @@ class CartScreen extends StatelessWidget {
                     IconButton(
                       icon: Icon(Icons.delete_outline, color: Colors.red),
                       onPressed: () {
-                        cartController.removeItem(item.product.id);
+                        cartController.removeItem(item);
                       },
                     ),
                   ],
@@ -121,9 +123,14 @@ class CartScreen extends StatelessWidget {
                 style: GoogleFonts.lato(color: Colors.black, fontSize: 19),
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed:
+                    cartController.cartItems.isEmpty ||
+                        cartController.isCompleting.value
+                    ? null
+                    : cartController.completeOrder,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColor.b3,
+                  disabledBackgroundColor: AppColor.b3,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 25,
                     vertical: 10,
@@ -132,10 +139,19 @@ class CartScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: Text(
-                  'Complete',
-                  style: GoogleFonts.lato(color: Colors.white),
-                ),
+                child: cartController.isCompleting.value
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Text(
+                        'Complete',
+                        style: GoogleFonts.lato(color: Colors.white),
+                      ),
               ),
             ],
           ),

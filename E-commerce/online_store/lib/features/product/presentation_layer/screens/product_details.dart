@@ -3,6 +3,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:online_store/common/widgets/app_error_view.dart';
+import 'package:online_store/common/widgets/app_network_image.dart';
 import 'package:online_store/core/const/app_color.dart';
 import 'package:online_store/features/favorite/busines_logic_layer/favorite_controller.dart';
 import 'package:online_store/features/product/busines_logic_layer/product_details_controller.dart';
@@ -16,7 +18,6 @@ class ProductDetailsScreen extends StatelessWidget {
     final controller = Get.put(ProductDetailsController());
     final favController = Get.put(FavoriteController());
     controller.loadProduct(productId);
-    favController.loadFavorites();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
@@ -59,6 +60,15 @@ class ProductDetailsScreen extends StatelessWidget {
         if (controller.isLoading.value) {
           return Center(child: SpinKitCircle(color: AppColor.b));
         }
+        if (controller.errorMessage.value.isNotEmpty &&
+            controller.product.value == null) {
+          return AppErrorView(
+            message: controller.errorMessage.value,
+            onRetry: () {
+              controller.loadProduct(productId, force: true);
+            },
+          );
+        }
         final p = controller.product.value;
         if (p == null) {
           return Center(child: Text('The product was not found.'));
@@ -71,16 +81,11 @@ class ProductDetailsScreen extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  p.image ?? '',
+                child: AppNetworkImage(
+                  url: p.image,
                   width: double.infinity,
                   height: 250,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Icon(
-                    Icons.image_not_supported,
-                    size: 60,
-                    color: AppColor.b,
-                  ),
+                  iconSize: 60,
                 ),
               ),
               SizedBox(height: 16),
@@ -147,12 +152,23 @@ class ProductDetailsScreen extends StatelessWidget {
               SizedBox(width: 16),
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: controller.addToCart,
-                  icon: SvgPicture.asset(
-                    'assets/icons/cart-large-minimalistic-svgrepo-com.svg',
-                    // ignore: deprecated_member_use
-                    color: Colors.white,
-                  ),
+                  onPressed: controller.isAdding.value
+                      ? null
+                      : controller.addToCart,
+                  icon: controller.isAdding.value
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : SvgPicture.asset(
+                          'assets/icons/cart-large-minimalistic-svgrepo-com.svg',
+                          // ignore: deprecated_member_use
+                          color: Colors.white,
+                        ),
                   label: Text(
                     'Add to cart',
                     style: GoogleFonts.lato(color: Colors.white),

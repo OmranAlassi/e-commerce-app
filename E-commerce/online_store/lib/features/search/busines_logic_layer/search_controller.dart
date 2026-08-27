@@ -1,8 +1,9 @@
 import 'package:get/get.dart';
+import 'package:online_store/core/network/api_error.dart';
 import 'package:online_store/features/product/data_layer/models/product_model.dart';
 import 'package:online_store/features/search/data_layer/service/search_service.dart';
 
-class SearchController extends GetxController {
+class ProductSearchController extends GetxController {
   final SearchService searchService = SearchService();
   RxBool isLoading = false.obs;
   RxList<ProductModel> results = <ProductModel>[].obs;
@@ -16,7 +17,7 @@ class SearchController extends GetxController {
     try {
       results.value = await searchService.searchProducts(query);
     } catch (e) {
-      Get.snackbar('Error', e.toString());
+      Get.snackbar('Error', ApiError.from(e));
     } finally {
       isLoading.value = false;
     }

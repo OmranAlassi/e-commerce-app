@@ -1,69 +1,82 @@
 import 'package:dio/dio.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:online_store/core/network/api_error.dart';
+import 'package:online_store/core/network/api_headers.dart';
 import 'package:online_store/features/favorite/data_layer/models/favorite_model.dart';
 
 class FavoriteService {
-  final Dio dio = Dio();
+  final Dio dio = Dio(ApiHeaders.dioOptions());
   final box = GetStorage();
 
   Future<List<FavoriteModel>> getFavorites() async {
     try {
-      final token = box.read('token');
+      final token = ApiHeaders.token();
+      if (token == null) throw 'Please login first';
+
       final response = await dio.get(
-        'https://training.tamkeen-dev.com/herafi/public/api/favorite',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+        '${ApiHeaders.baseUrl}/favorite',
+        options: ApiHeaders.authOptions(),
       );
-      if (response.statusCode == 200 && response.data['code'] == 1) {
-        return FavoriteModel.fromJsonList(response.data);
-      } else {
-        throw response.data['message'] ?? 'Favorites failed to load';
+      if (response.statusCode == 200) {
+        ApiError.ensureSuccess(response.data, 'Favorites failed to load');
+        return FavoriteModel.fromJsonList(
+          response.data is Map ? Map<String, dynamic>.from(response.data) : {},
+        );
       }
+      throw ApiError.extractMessage(response.data) ??
+          'Favorites failed to load';
+    } on DioException catch (e) {
+      throw ApiError.from(e);
     } catch (e) {
-      throw 'An error occurred while loading the favorites: $e';
+      throw ApiError.from(e);
     }
   }
 
   Future<void> addToFavorite(int productId) async {
     try {
-      final token = box.read('token');
-      await dio.post(
-        'https://training.tamkeen-dev.com/herafi/public/api/favorite',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      final token = ApiHeaders.token();
+      if (token == null) throw 'Please login first';
+
+      final response = await dio.post(
+        '${ApiHeaders.baseUrl}/favorite',
+        options: ApiHeaders.authOptions(),
         data: {'product_id': productId},
       );
-    } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionError) {
-        throw 'Connection error, check your internet connection';
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        ApiError.ensureSuccess(response.data, 'Failed to add to favorites');
+        return;
       }
-      throw e.response?.data['message'] ?? 'Favorites failed to load';
+      throw ApiError.extractMessage(response.data) ??
+          'Failed to add to favorites';
+    } on DioException catch (e) {
+      throw ApiError.from(e);
     } catch (e) {
-      throw 'An unexpected error occurred: $e';
+      throw ApiError.from(e);
     }
   }
 
   Future<void> deleteFromFavorite(int productId) async {
     try {
-      final token = box.read('token');
-      // print('Token used: $token');
+      final token = ApiHeaders.token();
+      if (token == null) throw 'Please login first';
+
       final response = await dio.delete(
-        'https://training.tamkeen-dev.com/herafi/public/api/favorite/$productId',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+        '${ApiHeaders.baseUrl}/favorite/$productId',
+        options: ApiHeaders.authOptions(),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        if (response.data is Map) {
+          ApiError.ensureSuccess(response.data, 'Failed to delete favorites');
+        }
         return;
       }
-
-      if (response.statusCode != 200 || response.data['code'] != 1) {
-        throw response.data['message'] ?? 'Failed to delete favorites';
-      }
+      throw ApiError.extractMessage(response.data) ??
+          'Failed to delete favorites';
     } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionError) {
-        throw 'Connection error, check your internet connection';
-      }
-      throw e.response?.data['message'] ?? 'Failed to delete favorites';
+      throw ApiError.from(e);
     } catch (e) {
-      throw 'An unexpected error occurred: $e';
+      throw ApiError.from(e);
     }
   }
 }

@@ -4,25 +4,25 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/route_manager.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:online_store/common/widgets/app_error_view.dart';
+import 'package:online_store/common/widgets/app_network_image.dart';
 import 'package:online_store/core/const/app_color.dart';
 import 'package:online_store/features/home/busines_logic_layer/home_controller.dart';
 import 'package:online_store/features/product/busines_logic_layer/product_controller.dart';
 import 'package:online_store/features/product/presentation_layer/screens/product_details.dart';
+import 'package:online_store/features/profile/busines_logic_layer/profile_controller.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 // ignore: must_be_immutable
 class HomeScreen extends StatelessWidget {
-  final box = GetStorage();
   HomeScreen({super.key});
   final ProductController productController = Get.put(ProductController());
   final HomeController homeController = Get.put(HomeController());
+  final ProfileController profileController = Get.put(ProfileController());
   final CarouselSliderController _controller = CarouselSliderController();
   @override
   Widget build(BuildContext context) {
-    final String userName = box.read('user_name') ?? 'User';
-    final String email = box.read('user_email') ?? 'Email';
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -33,25 +33,48 @@ class HomeScreen extends StatelessWidget {
         automaticallyImplyLeading: false,
         title: Padding(
           padding: const EdgeInsets.only(top: 25),
-          child: Row(
-            spacing: 8,
-            children: [
-              CircleAvatar(backgroundColor: Colors.white),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    userName,
-                    style: GoogleFonts.lato(color: Colors.white, fontSize: 12),
-                  ),
-                  Text(
-                    email,
-                    style: GoogleFonts.lato(color: Colors.white, fontSize: 12),
-                  ),
-                ],
-              ),
-            ],
-          ),
+          child: Obx(() {
+            final String userName = profileController.name.value.isEmpty
+                ? 'User'
+                : profileController.name.value;
+            final String email = profileController.email.value.isEmpty
+                ? 'Email'
+                : profileController.email.value;
+            final String imageUrl = profileController.image.value.trim();
+            return Row(
+              spacing: 8,
+              children: [
+                CircleAvatar(
+                  backgroundColor: Colors.white,
+                  backgroundImage: imageUrl.isNotEmpty
+                      ? NetworkImage(imageUrl)
+                      : null,
+                  child: imageUrl.isEmpty
+                      ? Icon(Icons.person, color: AppColor.b)
+                      : null,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      userName,
+                      style: GoogleFonts.lato(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
+                      email,
+                      style: GoogleFonts.lato(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          }),
         ),
         titleSpacing: 25,
       ),
@@ -89,8 +112,8 @@ class HomeScreen extends StatelessWidget {
                       CarouselSlider(
                         carouselController: _controller,
                         items: homeController.sliders.map((slider) {
-                          return Image.network(
-                            slider.image,
+                          return AppNetworkImage(
+                            url: slider.image,
                             fit: BoxFit.cover,
                             width: double.infinity,
                           );
@@ -200,6 +223,13 @@ class HomeScreen extends StatelessWidget {
                   if (productController.isLoading.value) {
                     return Center(child: SpinKitCircle(color: AppColor.b));
                   }
+                  if (productController.errorMessage.value.isNotEmpty &&
+                      productController.products.isEmpty) {
+                    return AppErrorView(
+                      message: productController.errorMessage.value,
+                      onRetry: productController.loadProducts,
+                    );
+                  }
                   if (productController.products.isEmpty) {
                     return Center(
                       child: Text(
@@ -239,16 +269,11 @@ class HomeScreen extends StatelessWidget {
                                   borderRadius: const BorderRadius.vertical(
                                     top: Radius.circular(12),
                                   ),
-                                  child: Image.network(
-                                    p.image ?? '',
+                                  child: AppNetworkImage(
+                                    url: p.image,
                                     fit: BoxFit.cover,
                                     width: double.infinity,
-                                    errorBuilder:
-                                        (context, error, stackTrace) => Icon(
-                                          Icons.image_not_supported,
-                                          size: 60,
-                                          color: AppColor.b,
-                                        ),
+                                    iconSize: 60,
                                   ),
                                 ),
                               ),

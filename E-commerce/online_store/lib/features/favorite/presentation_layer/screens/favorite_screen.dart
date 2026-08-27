@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:online_store/common/widgets/app_error_view.dart';
+import 'package:online_store/common/widgets/app_network_image.dart';
 import 'package:online_store/core/const/app_color.dart';
 import 'package:online_store/features/favorite/busines_logic_layer/favorite_controller.dart';
+import 'package:online_store/features/product/presentation_layer/screens/product_details.dart';
 
 class FavoriteScreen extends StatelessWidget {
   final FavoriteController favoriteController = Get.put(FavoriteController());
@@ -29,7 +33,15 @@ class FavoriteScreen extends StatelessWidget {
       ),
       body: Obx(() {
         if (favoriteController.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: SpinKitCircle(color: AppColor.b));
+        }
+
+        if (favoriteController.errorMessage.value.isNotEmpty &&
+            favoriteController.favorites.isEmpty) {
+          return AppErrorView(
+            message: favoriteController.errorMessage.value,
+            onRetry: favoriteController.loadFavorites,
+          );
         }
 
         if (favoriteController.favorites.isEmpty) {
@@ -56,15 +68,15 @@ class FavoriteScreen extends StatelessWidget {
               elevation: 5,
               margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
               child: ListTile(
+                onTap: () =>
+                    Get.to(() => ProductDetailsScreen(productId: product.id)),
                 leading: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    product.image ?? '',
+                  child: AppNetworkImage(
+                    url: product.image,
                     width: 60,
                     height: 60,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        Icon(Icons.image_not_supported, color: AppColor.b),
+                    iconSize: 32,
                   ),
                 ),
                 title: Text(

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:online_store/core/const/app_color.dart';
+import 'package:online_store/features/cart/busines_logic_layer/cart_controller.dart';
 import 'package:online_store/features/cart/presentation_layer/screens/cart_screen.dart';
+import 'package:online_store/features/favorite/busines_logic_layer/favorite_controller.dart';
 import 'package:online_store/features/favorite/presentation_layer/screens/favorite_screen.dart';
 import 'package:online_store/features/home/presentation_layer/screens/home_screen.dart';
 import 'package:online_store/features/profile/presentation_layer/screens/profile_screen.dart';
@@ -15,6 +18,14 @@ class SuperhomeScreen extends StatelessWidget {
       backgroundColor: Colors.white,
 
       bottomNavigationBar: PersistentTabView(
+        onTabChanged: (index) {
+          if (index == 1 && Get.isRegistered<CartController>()) {
+            Get.find<CartController>().loadCart(showLoading: false);
+          }
+          if (index == 2 && Get.isRegistered<FavoriteController>()) {
+            Get.find<FavoriteController>().loadFavorites(showLoading: false);
+          }
+        },
         tabs: [
           PersistentTabConfig(
             screen: HomeScreen(),

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:get/get.dart' hide Trans;
-import 'package:online_store/core/routing/routing_manager.dart';
+import 'package:online_store/core/network/api_error.dart';
 import 'package:online_store/features/auth/data_layer/service/authservice.dart';
 
 class OtpController extends GetxController {
@@ -15,31 +15,6 @@ class OtpController extends GetxController {
   void onInit() {
     super.onInit();
     startTimer();
-  }
-
-  Future<void> otp(String phone, String otp) async {
-    try {
-      isLoading.value = true;
-      bool success = await _authService.otp(phone: phone, code: otp);
-      if (success) {
-        isLoading.value = false;
-        Get.snackbar(
-          'Login successfuly',
-          'Welcome!',
-          // ignore: deprecated_member_use
-          backgroundColor: Color(0xFF44C838).withOpacity(0.5),
-        );
-        Get.offNamed(RoutingManager.superHomeScr);
-      } else {}
-    } catch (e) {
-      isLoading.value = false;
-      Get.snackbar(
-        'Login Failed',
-        e.toString(),
-        // ignore: deprecated_member_use
-        backgroundColor: Color(0XFFCF362E).withOpacity(0.5),
-      );
-    }
   }
 
   void startTimer() {
@@ -64,38 +39,28 @@ class OtpController extends GetxController {
     return '$m:$sec';
   }
 
-  void resendCode(String phoneNumber) {
+  Future<void> resendCode(String phoneNumber) async {
     if (!canResend.value) return;
-
-    // ignore: unused_element
-    Future<void> otp(String phone, String otp) async {
-      try {
-        isLoading.value = true;
-        bool success = await _authService.otp(phone: phone, code: otp);
-        if (success) {
-          isLoading.value = false;
-          Get.snackbar(
-            'Login successfuly',
-            'Welcome!',
-            // ignore: deprecated_member_use
-            backgroundColor: Color(0xFF44C838).withOpacity(0.5),
-          );
-          Get.offNamed(RoutingManager.superHomeScr);
-        } else {
-          // log('Failed');
-        }
-      } catch (e) {
-        isLoading.value = false;
-        Get.snackbar(
-          'Login Failed',
-          e.toString(),
-          // ignore: deprecated_member_use
-          backgroundColor: Color(0XFFCF362E).withOpacity(0.5),
-        );
-      }
+    try {
+      isLoading.value = true;
+      await _authService.login(phone: phoneNumber);
+      startTimer();
+      Get.snackbar(
+        'Code sent',
+        'A new code has been sent to your phone',
+        // ignore: deprecated_member_use
+        backgroundColor: Color(0xFF44C838).withOpacity(0.5),
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        ApiError.from(e, logoutOn401: false),
+        // ignore: deprecated_member_use
+        backgroundColor: Color(0XFFCF362E).withOpacity(0.5),
+      );
+    } finally {
+      isLoading.value = false;
     }
-
-    startTimer();
   }
 
   @override

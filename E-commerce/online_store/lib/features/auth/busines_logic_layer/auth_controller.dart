@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:online_store/core/network/api_error.dart';
 import 'package:online_store/core/routing/routing_manager.dart';
 import 'package:online_store/features/auth/data_layer/service/authservice.dart';
 
@@ -17,7 +18,6 @@ class AuthController extends GetxController {
       isLoading.value = true;
       bool success = await _authService.login(phone: phone);
       if (success) {
-        isLoading.value = false;
         Get.snackbar(
           'Login successfuly',
           'Welcome!',
@@ -25,22 +25,23 @@ class AuthController extends GetxController {
           backgroundColor: Color(0xFF44C838).withOpacity(0.5),
         );
         Get.offNamed(RoutingManager.otpScr, arguments: phone);
-      } else {}
+      } else {
+        Get.snackbar(
+          'Login Failed',
+          'Please try again',
+          // ignore: deprecated_member_use
+          backgroundColor: Color(0XFFCF362E).withOpacity(0.5),
+        );
+      }
     } catch (e) {
+      Get.snackbar(
+        'Login Failed',
+        ApiError.from(e, logoutOn401: false),
+        // ignore: deprecated_member_use
+        backgroundColor: Color(0XFFCF362E).withOpacity(0.5),
+      );
+    } finally {
       isLoading.value = false;
-      Get.snackbar(
-        'Login Failed',
-        e.toString(),
-        // ignore: deprecated_member_use
-        backgroundColor: Color(0XFFCF362E).withOpacity(0.5),
-      );
-
-      Get.snackbar(
-        'Login Failed',
-        e.toString(),
-        // ignore: deprecated_member_use
-        backgroundColor: Color(0XFFCF362E).withOpacity(0.5),
-      );
     }
   }
 
@@ -49,7 +50,6 @@ class AuthController extends GetxController {
       isLoading.value = true;
       bool success = await _authService.otp(phone: phone, code: code);
       if (success) {
-        isLoading.value = false;
         Get.snackbar(
           'Login successfuly',
           'Welcome!',
@@ -57,15 +57,23 @@ class AuthController extends GetxController {
           backgroundColor: Color(0xFF44C838).withOpacity(0.5),
         );
         Get.offNamed(RoutingManager.superHomeScr);
-      } else {}
+      } else {
+        Get.snackbar(
+          'Login Failed',
+          'Invalid code, please try again',
+          // ignore: deprecated_member_use
+          backgroundColor: Color(0XFFCF362E).withOpacity(0.5),
+        );
+      }
     } catch (e) {
-      isLoading.value = false;
       Get.snackbar(
         'Login Failed',
-        e.toString(),
+        ApiError.from(e, logoutOn401: false),
         // ignore: deprecated_member_use
         backgroundColor: Color(0XFFCF362E).withOpacity(0.5),
       );
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -78,7 +86,6 @@ class AuthController extends GetxController {
         email: email,
       );
       if (success) {
-        isLoading.value = false;
         Get.snackbar(
           'Your information accepted',
           'you will resive a code message',
@@ -86,21 +93,29 @@ class AuthController extends GetxController {
           backgroundColor: Color(0xFF44C838).withOpacity(0.5),
         );
         Get.offAllNamed(RoutingManager.otpScr, arguments: phone);
-      } else {}
+      } else {
+        Get.snackbar(
+          'Signup Failed',
+          'Please try again',
+          // ignore: deprecated_member_use
+          backgroundColor: Color(0XFFCF362E).withOpacity(0.5),
+        );
+      }
     } catch (e) {
-      isLoading.value = false;
       Get.snackbar(
         'Signup Failed',
-        e.toString(),
+        ApiError.from(e, logoutOn401: false),
         // ignore: deprecated_member_use
         backgroundColor: Color(0XFFCF362E).withOpacity(0.5),
       );
+    } finally {
+      isLoading.value = false;
     }
   }
 
   FormFieldValidator<String> phoneValidator() {
     return (value) {
-      if (value == null) {
+      if (value == null || value.isEmpty) {
         return 'Please fill out this field';
       } else if (value.length != 10) {
         return 'Phone number must be 10 digits';

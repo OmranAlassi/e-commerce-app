@@ -4,6 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:online_store/core/routing/routing_manager.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   runApp(MyApp());
 }

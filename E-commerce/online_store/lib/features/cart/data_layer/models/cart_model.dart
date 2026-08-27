@@ -1,3 +1,4 @@
+import 'package:online_store/core/utils/parse_helper.dart';
 import 'package:online_store/features/product/data_layer/models/product_model.dart';
 
 class CartModel {
@@ -8,16 +9,17 @@ class CartModel {
   CartModel({required this.id, required this.quantity, required this.product});
 
   factory CartModel.fromJson(Map<String, dynamic> json) {
+    final data = ParseHelper.mapOf(json);
     return CartModel(
-      id: json['id'] ?? 0,
-      quantity: json['quantity'] ?? 0,
-      product: ProductModel.fromJson(json['product'] ?? {}),
+      id: ParseHelper.toInt(
+        data['id'] ?? data['cart_id'] ?? data['cart_item_id'],
+      ),
+      quantity: ParseHelper.toInt(data['quantity']),
+      product: ProductModel.fromJson(ParseHelper.mapOf(data['product'])),
     );
   }
 
   static List<CartModel> fromJsonList(Map<String, dynamic> json) {
-    final List<CartModel> cart = [];
-    json['data'].forEach((element) => cart.add(CartModel.fromJson(element)));
-    return cart;
+    return ParseHelper.mapList(json['data']).map(CartModel.fromJson).toList();
   }
 }

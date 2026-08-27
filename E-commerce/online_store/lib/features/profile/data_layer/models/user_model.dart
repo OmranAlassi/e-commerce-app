@@ -1,3 +1,5 @@
+import 'package:online_store/core/utils/parse_helper.dart';
+
 class User {
   final int id;
   final String name;
@@ -16,19 +18,21 @@ class User {
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
+    var data = ParseHelper.mapOf(json);
+    if (data['data'] is Map) {
+      data = ParseHelper.mapOf(data['data']);
+    }
     return User(
-      id: json['id'],
-      name: json['name'],
-      email: json['email'],
-      phone: json['phone'],
-      image: json['image'],
-      token: json['token'],
+      id: ParseHelper.toInt(data['id']),
+      name: ParseHelper.text(data['name']),
+      email: ParseHelper.text(data['email']),
+      phone: ParseHelper.text(data['phone']),
+      image: ParseHelper.imageUrl(data['image'] ?? data['avatar']),
+      token: data['token']?.toString(),
     );
   }
 
   static List<User> fromJsonList(Map<String, dynamic> json) {
-    List<User> user = [];
-    json['data'].forEach((element) => user.add(User.fromJson(element)));
-    return user;
+    return ParseHelper.mapList(json['data']).map(User.fromJson).toList();
   }
 }

@@ -1,3 +1,4 @@
+import 'package:online_store/core/utils/parse_helper.dart';
 import 'package:online_store/features/product/data_layer/models/product_model.dart';
 
 class FavoriteModel {
@@ -7,17 +8,16 @@ class FavoriteModel {
   FavoriteModel({required this.id, required this.product});
 
   factory FavoriteModel.fromJson(Map<String, dynamic> json) {
+    final data = ParseHelper.mapOf(json);
     return FavoriteModel(
-      id: json['id'],
-      product: ProductModel.fromJson(json['product']),
+      id: ParseHelper.toInt(data['id']),
+      product: ProductModel.fromJson(ParseHelper.mapOf(data['product'])),
     );
   }
 
   static List<FavoriteModel> fromJsonList(Map<String, dynamic> json) {
-    List<FavoriteModel> favorites = [];
-    json['data'].forEach(
-      (element) => favorites.add(FavoriteModel.fromJson(element)),
-    );
-    return favorites;
+    return ParseHelper.mapList(json['data'])
+        .map(FavoriteModel.fromJson)
+        .toList();
   }
 }

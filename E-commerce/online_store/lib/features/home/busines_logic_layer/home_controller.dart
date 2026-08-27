@@ -1,5 +1,6 @@
-import 'package:flutter/rendering.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Trans;
+import 'package:online_store/core/network/api_error.dart';
 import 'package:online_store/features/home/data_layer/models/slider_model.dart';
 import 'package:online_store/features/home/data_layer/service/home_service.dart';
 
@@ -24,7 +25,7 @@ class HomeController extends GetxController {
     } catch (e) {
       Get.snackbar(
         'Error',
-        e.toString(),
+        ApiError.from(e),
         // ignore: deprecated_member_use
         backgroundColor: Color(0XFFCF362E).withOpacity(0.5),
       );
